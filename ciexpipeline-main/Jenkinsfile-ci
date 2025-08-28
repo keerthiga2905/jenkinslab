@@ -2,30 +2,43 @@ pipeline {
     agent any
 
     tools {
-        maven 'M4'     // Maven from Jenkins Global Tool Config
-        jdk 'JDK24'    // JDK from Jenkins Global Tool Config
+        maven 'Maven3'   // Match with Jenkins Global Tool name
+        jdk 'JDK24'      // Match with Jenkins Global Tool name
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main',
-                    url: 'https://github.com/keerthiga2905/jenkinslab.git'
+                git branch: 'main', url: 'https://github.com/keerthiga2905/jenkinslab.git'
             }
         }
 
         stage('Build') {
             steps {
-                // Jenkins will prepend Maven & JDK automatically
-                bat 'mvn -version'
-                bat 'mvn clean package -DskipTests=false'
+                bat 'mvn clean install'
             }
         }
 
-        stage('Archive Artifacts') {
+        stage('Test') {
             steps {
-                archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
+                bat 'mvn test'
+            }
+        }
+
+        stage('Package') {
+            steps {
+                bat 'mvn package'
             }
         }
     }
+
+    post {
+        success {
+            echo '✅ Build completed successfully'
+        }
+        failure {
+            echo '❌ Build failed'
+        }
+    }
 }
+
