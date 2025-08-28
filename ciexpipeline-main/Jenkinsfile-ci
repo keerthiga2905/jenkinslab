@@ -1,10 +1,16 @@
 pipeline {
     agent any
 
+    tools {
+        maven 'M3'     // Name of Maven from Jenkins global tools
+        jdk 'JDK24'    // Name of JDK from Jenkins global tools
+    }
+
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/viji-sarvesh/ciexpipeline.git'
+                git branch: 'main',
+                    url: 'https://github.com/keerthiga2905/jenkinslab.git'
             }
         }
 
@@ -16,7 +22,7 @@ pipeline {
 
         stage('Archive Artifacts') {
             steps {
-                archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+                archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
             }
         }
     }
